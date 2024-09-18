@@ -1,0 +1,73 @@
+plugins {
+	id 'java'
+	id 'application'
+}
+
+group 'com.example.demotests'
+version '1.0-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	junitVersion = '5.8.2'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+def allureVersion = "2.25.0"
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+sourceSets {
+	test {
+		java {
+			srcDirs = ['src/test/java']
+		}
+	}
+}
+
+configurations {
+	agent {
+		canBeResolved = true
+		canBeConsumed = true
+	}
+}
+
+dependencies {
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	// JUnit 5
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	testImplementation 'org.junit.platform:junit-platform-suite-api:1.8.2'
+	testImplementation 'org.junit.platform:junit-platform-launcher:1.8.2'
+	testImplementation 'org.junit.vintage:junit-vintage-engine'
+	implementation group: 'org.junit.platform', name: 'junit-platform-console', version: '1.10.2'
+	// Rest-Assured
+	testImplementation 'io.rest-assured:rest-assured:5.3.1'
+	// GSON
+	implementation 'com.google.code.gson:gson:2.9.0'
+	// Allure Reports
+	testImplementation 'io.qameta.allure:allure-junit5:2.22.0'
+	testImplementation 'io.qameta.allure:allure-rest-assured:2.22.0'
+	testImplementation platform("io.qameta.allure:allure-bom:$allureVersion")
+	testImplementation 'io.qameta.allure:allure-junit5'
+	testImplementation 'io.qameta.allure:allure-assertj:2.12.1'
+	testImplementation 'io.qameta.allure:allure-commandline:2.9.0'
+	// Add aspectjweaver dependency
+	agent 'org.aspectj:aspectjweaver:1.9.21'
+	// Logback
+	testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
+
+}
+
+test {
+	useJUnitPlatform()
+	jvmArgs = [ "-javaagent:${configurations.agent.singleFile}" ]
+}
